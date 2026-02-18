@@ -1,0 +1,74 @@
+@use '@angular/material' as mat;
+
+@include mat.core();
+
+$roster-theme: mat.define-theme((
+  color: (
+    theme-type: light,
+    primary: mat.$azure-palette,
+  ),
+));
+
+html {
+  @include mat.all-component-themes($roster-theme);
+}
+
+html, body {
+  height: 100%;
+  margin: 0;
+  font-family: Roboto, "Helvetica Neue", sans-serif;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+/* Mobile-friendly touch targets and responsive improvements */
+@media (max-width: 768px) {
+  /* Ensure touch targets are at least 44x44 pixels */
+  button, a, .mat-mdc-icon-button {
+    min-height: 44px;
+    min-width: 44px;
+  }
+
+  /* Make Material buttons more touch-friendly */
+  .mat-mdc-button, .mat-mdc-raised-button {
+    padding: 12px 16px;
+  }
+
+  /* Better spacing for form fields on mobile */
+  .mat-mdc-form-field {
+    font-size: 16px; /* Prevents zoom on iOS */
+  }
+
+  /* Dialog improvements */
+  .mat-mdc-dialog-container {
+    padding: 16px;
+  }
+
+  /* Table improvements for small screens */
+  .mat-mdc-table {
+    font-size: 13px;
+  }
+
+  .mat-mdc-header-cell,
+  .mat-mdc-cell {
+    padding: 8px !important;
+  }
+}
+
+/* Horizontal scroll container improvements */
+.roster-grid-container {
+  -webkit-overflow-scrolling: touch; /* Smooth scrolling on iOS */
+}
+
+/* Prevent text selection during touch scrolling */
+.roster-grid-container * {
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+.roster-grid-container .shift-cell,
+.roster-grid-container .employee-cell {
+  -webkit-tap-highlight-color: transparent;
+}
