@@ -343,71 +343,7 @@ interface DayColumn {
       width: 120px;
     }
 
-    /* Mobile View Styles */
-    .mobile-view {
-      flex: 1;
-      overflow-y: auto;
-      padding-bottom: 20px;
-    }
-
-    .day-card {
-      margin-bottom: 16px;
-    }
-
-    .day-card mat-card-title {
-      font-size: 18px;
-      font-weight: 600;
-    }
-
-    .employee-shift {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 12px 0;
-      border-bottom: 1px solid #f0f0f0;
-      min-height: 60px;
-    }
-
-    .employee-shift:last-child {
-      border-bottom: none;
-    }
-
-    .employee-info {
-      display: flex;
-      flex-direction: column;
-      gap: 4px;
-    }
-
-    .employee-role-small {
-      font-size: 12px;
-      color: #666;
-    }
-
-    .shift-assignment {
-      flex-shrink: 0;
-    }
-
-    .shift-badge-mobile {
-      padding: 8px 16px;
-      border-radius: 6px;
-      color: white;
-      font-size: 13px;
-      font-weight: 500;
-      text-align: center;
-      min-width: 100px;
-      display: flex;
-      flex-direction: column;
-      gap: 2px;
-    }
-
-    .shift-time {
-      font-size: 11px;
-      opacity: 0.9;
-    }
-
-    .add-shift-btn {
-      font-size: 13px;
-    }
+    /* Mobile compact grid */
 
     /* Mobile Grid Styles */
     .mobile-grid {
