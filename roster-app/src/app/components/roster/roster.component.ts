@@ -59,8 +59,8 @@ interface DayColumn {
       </div>
       <div class="period-label-mobile">{{ getPeriodLabel() }}</div>
 
-      <!-- Mobile Card View -->
-      <div class="mobile-view" *ngIf="isMobile">
+      <!-- Mobile Card View - Month Only -->
+      <div class="mobile-view" *ngIf="isMobile && viewMode === 'month'">
         <mat-card *ngFor="let day of days" class="day-card">
           <mat-card-header>
             <mat-card-title>{{ day.dayName }}, {{ formatDate(day.date) }}</mat-card-title>
@@ -90,6 +90,44 @@ interface DayColumn {
             </div>
           </mat-card-content>
         </mat-card>
+      </div>
+
+      <!-- Mobile Grid View - Week Only -->
+      <div class="roster-grid-container mobile-grid" *ngIf="isMobile && viewMode === 'week'">
+        <div class="roster-grid">
+          <!-- Header Row -->
+          <div class="grid-header">
+            <div class="employee-header mobile-employee-header">Name</div>
+            <div class="day-header mobile-day-header" *ngFor="let day of days">
+              <div class="day-name">{{ day.dayName }}</div>
+              <div class="day-date">{{ formatDateShort(day.date) }}</div>
+            </div>
+          </div>
+
+          <!-- Employee Rows -->
+          <div class="employee-row mobile-employee-row" *ngFor="let employee of employees">
+            <div class="employee-cell mobile-employee-cell">
+              <div class="employee-name mobile-employee-name">{{ employee.name }}</div>
+            </div>
+            <div 
+              class="shift-cell mobile-shift-cell"
+              *ngFor="let day of days"
+              [matMenuTriggerFor]="shiftMenu"
+              [matMenuTriggerData]="{employee: employee, date: day.dateStr}"
+              (click)="selectCell(employee, day.dateStr)">
+              <div 
+                class="shift-badge mobile-shift-badge"
+                *ngIf="getShift(employee.id, day.dateStr) as shift"
+                [style.background-color]="shift.color"
+                [matTooltip]="shift.name + ' (' + shift.startTime + ' - ' + shift.endTime + ')'">
+                {{ getShortShiftName(shift.name) }}
+              </div>
+              <div class="empty-cell" *ngIf="!getShift(employee.id, day.dateStr)">
+                +
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
 
       <!-- Desktop Table View -->
@@ -404,6 +442,66 @@ interface DayColumn {
       font-size: 13px;
     }
 
+    /* Mobile Grid Styles */
+    .mobile-grid {
+      /* Enable horizontal scrolling */
+      overflow-x: auto;
+      overflow-y: auto;
+      -webkit-overflow-scrolling: touch;
+    }
+
+    .mobile-employee-header {
+      width: 120px !important;
+      min-width: 120px !important;
+      font-size: 13px;
+      padding: 12px 8px !important;
+    }
+
+    .mobile-day-header {
+      width: 65px !important;
+      min-width: 65px !important;
+      padding: 8px 4px !important;
+    }
+
+    .mobile-day-header .day-name {
+      font-size: 12px;
+    }
+
+    .mobile-day-header .day-date {
+      font-size: 10px;
+    }
+
+    .mobile-employee-row {
+      min-height: 48px; /* Touch-friendly height */
+    }
+
+    .mobile-employee-cell {
+      width: 120px !important;
+      min-width: 120px !important;
+      padding: 8px !important;
+    }
+
+    .mobile-employee-name {
+      font-size: 13px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .mobile-shift-cell {
+      width: 65px !important;
+      min-width: 65px !important;
+      padding: 4px !important;
+      min-height: 48px; /* Touch-friendly */
+    }
+
+    .mobile-shift-badge {
+      padding: 4px 2px !important;
+      font-size: 14px !important;
+      font-weight: 600 !important;
+      border-radius: 4px;
+    }
+
     /* Responsive breakpoints */
     @media (max-width: 768px) {
       .roster-container {
@@ -454,6 +552,19 @@ interface DayColumn {
       .today-btn {
         min-width: 50px;
         padding: 0 8px;
+      }
+
+      /* Even more compact on very small screens */
+      .mobile-employee-header,
+      .mobile-employee-cell {
+        width: 100px !important;
+        min-width: 100px !important;
+      }
+
+      .mobile-day-header,
+      .mobile-shift-cell {
+        width: 60px !important;
+        min-width: 60px !important;
       }
     }
   `]
@@ -537,8 +648,18 @@ export class RosterComponent implements OnInit {
     return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
   }
 
+  formatDateShort(date: Date): string {
+    // Very short format for mobile: just day number
+    return date.getDate().toString();
+  }
+
   formatDateLong(date: Date): string {
     return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+  }
+
+  getShortShiftName(shiftName: string): string {
+    // Return first letter of shift name for mobile compact view
+    return shiftName.charAt(0).toUpperCase();
   }
 
   getShift(employeeId: string, dateStr: string): ShiftType | null {
