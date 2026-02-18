@@ -59,41 +59,8 @@ interface DayColumn {
       </div>
       <div class="period-label-mobile">{{ getPeriodLabel() }}</div>
 
-      <!-- Mobile Card View - Month Only -->
-      <div class="mobile-view" *ngIf="isMobile && viewMode === 'month'">
-        <mat-card *ngFor="let day of days" class="day-card">
-          <mat-card-header>
-            <mat-card-title>{{ day.dayName }}, {{ formatDate(day.date) }}</mat-card-title>
-          </mat-card-header>
-          <mat-card-content>
-            <div class="employee-shift" *ngFor="let employee of employees">
-              <div class="employee-info">
-                <strong>{{ employee.name }}</strong>
-                <span class="employee-role-small">{{ employee.role }}</span>
-              </div>
-              <div 
-                class="shift-assignment"
-                [matMenuTriggerFor]="shiftMenu"
-                [matMenuTriggerData]="{employee: employee, date: day.dateStr}"
-                (click)="selectCell(employee, day.dateStr)">
-                <div 
-                  class="shift-badge-mobile"
-                  *ngIf="getShift(employee.id, day.dateStr) as shift"
-                  [style.background-color]="shift.color">
-                  {{ shift.name }}
-                  <span class="shift-time">{{ shift.startTime }} - {{ shift.endTime }}</span>
-                </div>
-                <button mat-stroked-button *ngIf="!getShift(employee.id, day.dateStr)" class="add-shift-btn">
-                  <mat-icon>add</mat-icon> Assign Shift
-                </button>
-              </div>
-            </div>
-          </mat-card-content>
-        </mat-card>
-      </div>
-
-      <!-- Mobile Grid View - Week Only -->
-      <div class="roster-grid-container mobile-grid" *ngIf="isMobile && viewMode === 'week'">
+      <!-- Mobile Grid View -->
+      <div class="roster-grid-container mobile-grid" *ngIf="isMobile">
         <div class="roster-grid">
           <!-- Header Row -->
           <div class="grid-header">
