@@ -1,1 +1,6 @@
 node_modules/
+
+# Backend
+roster-api/roster.db
+roster-api/roster.db-shm
+roster-api/roster.db-wal
