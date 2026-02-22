@@ -71,70 +71,20 @@ import { ShiftTypeDialogComponent } from '../shift-type-dialog/shift-type-dialog
     </div>
   `,
   styles: [`
-    .shift-types-container {
-      padding: 20px;
-    }
-
-    .header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 20px;
-    }
-
-    .header h1 {
-      margin: 0;
-    }
-
-    .table-container {
-      background: white;
-      border-radius: 8px;
-      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-      overflow: auto;
-    }
-
-    .shift-types-table {
-      width: 100%;
-    }
-
-    th {
-      font-weight: 600;
-    }
-
-    .color-box {
-      width: 40px;
-      height: 24px;
-      border-radius: 4px;
-      border: 1px solid #ddd;
-    }
-
-    button[mat-icon-button] {
-      margin: 0 4px;
-    }
-
+    .shift-types-container { padding: 20px; }
+    .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+    .header h1 { margin: 0; }
+    .table-container { background: white; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); overflow: auto; }
+    .shift-types-table { width: 100%; }
+    th { font-weight: 600; }
+    .color-box { width: 40px; height: 24px; border-radius: 4px; border: 1px solid #ddd; }
+    button[mat-icon-button] { margin: 0 4px; }
     @media (max-width: 768px) {
-      .shift-types-container {
-        padding: 12px;
-      }
-
-      .header {
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 12px;
-      }
-
-      .header h1 {
-        font-size: 20px;
-      }
-
-      .table-container {
-        font-size: 14px;
-      }
-
-      th, td {
-        padding: 8px 4px !important;
-        font-size: 13px;
-      }
+      .shift-types-container { padding: 12px; }
+      .header { flex-direction: column; align-items: flex-start; gap: 12px; }
+      .header h1 { font-size: 20px; }
+      .table-container { font-size: 14px; }
+      th, td { padding: 8px 4px !important; font-size: 13px; }
     }
   `]
 })
@@ -155,6 +105,7 @@ export class ShiftTypesComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    this.dataService.loadAll();
     this.dataService.getShiftTypes().subscribe(shiftTypes => {
       this.shiftTypes = shiftTypes;
     });
@@ -171,7 +122,12 @@ export class ShiftTypesComponent implements OnInit {
 
     dialogRef.afterClosed().subscribe(result => {
       if (result) {
-        this.dataService.addShiftType(result);
+        this.dataService.addShiftType({
+          name: result.name,
+          startTime: result.startTime,
+          endTime: result.endTime,
+          color: result.color
+        }).subscribe();
       }
     });
   }
@@ -187,14 +143,19 @@ export class ShiftTypesComponent implements OnInit {
 
     dialogRef.afterClosed().subscribe(result => {
       if (result) {
-        this.dataService.updateShiftType(result);
+        this.dataService.updateShiftType(shiftType.id, {
+          name: result.name,
+          startTime: result.startTime,
+          endTime: result.endTime,
+          color: result.color
+        }).subscribe();
       }
     });
   }
 
   deleteShiftType(shiftType: ShiftType): void {
     if (confirm(`Are you sure you want to delete shift type "${shiftType.name}"?`)) {
-      this.dataService.deleteShiftType(shiftType.id);
+      this.dataService.deleteShiftType(shiftType.id).subscribe();
     }
   }
 }

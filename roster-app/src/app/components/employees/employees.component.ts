@@ -11,7 +11,7 @@ import { MatSelectModule } from '@angular/material/select';
 import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
 import { DataService } from '../../services/data.service';
 import { Employee } from '../../models/employee.model';
-import { EmployeeDialogComponent } from '../employee-dialog/employee-dialog.component';
+import { EmployeeDialogComponent, EmployeeDialogResult } from '../employee-dialog/employee-dialog.component';
 
 @Component({
   selector: 'app-employees',
@@ -41,12 +41,12 @@ import { EmployeeDialogComponent } from '../employee-dialog/employee-dialog.comp
         <table mat-table [dataSource]="employees" class="employees-table">
           <ng-container matColumnDef="name">
             <th mat-header-cell *matHeaderCellDef>Name</th>
-            <td mat-cell *matCellDef="let employee">{{ employee.name }}</td>
+            <td mat-cell *matCellDef="let employee">{{ employee.firstName }} {{ employee.lastName }}</td>
           </ng-container>
 
           <ng-container matColumnDef="role">
             <th mat-header-cell *matHeaderCellDef>Role</th>
-            <td mat-cell *matCellDef="let employee">{{ employee.role }}</td>
+            <td mat-cell *matCellDef="let employee">{{ employee.jobRole }}</td>
           </ng-container>
 
           <ng-container matColumnDef="email">
@@ -78,63 +78,19 @@ import { EmployeeDialogComponent } from '../employee-dialog/employee-dialog.comp
     </div>
   `,
   styles: [`
-    .employees-container {
-      padding: 20px;
-    }
-
-    .header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 20px;
-    }
-
-    .header h1 {
-      margin: 0;
-    }
-
-    .table-container {
-      background: white;
-      border-radius: 8px;
-      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-      overflow: auto;
-    }
-
-    .employees-table {
-      width: 100%;
-    }
-
-    th {
-      font-weight: 600;
-    }
-
-    button[mat-icon-button] {
-      margin: 0 4px;
-    }
-
+    .employees-container { padding: 20px; }
+    .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+    .header h1 { margin: 0; }
+    .table-container { background: white; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); overflow: auto; }
+    .employees-table { width: 100%; }
+    th { font-weight: 600; }
+    button[mat-icon-button] { margin: 0 4px; }
     @media (max-width: 768px) {
-      .employees-container {
-        padding: 12px;
-      }
-
-      .header {
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 12px;
-      }
-
-      .header h1 {
-        font-size: 20px;
-      }
-
-      .table-container {
-        font-size: 14px;
-      }
-
-      th, td {
-        padding: 8px 4px !important;
-        font-size: 13px;
-      }
+      .employees-container { padding: 12px; }
+      .header { flex-direction: column; align-items: flex-start; gap: 12px; }
+      .header h1 { font-size: 20px; }
+      .table-container { font-size: 14px; }
+      th, td { padding: 8px 4px !important; font-size: 13px; }
     }
   `]
 })
@@ -155,6 +111,7 @@ export class EmployeesComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    this.dataService.loadAll();
     this.dataService.getEmployees().subscribe(employees => {
       this.employees = employees;
     });
@@ -169,9 +126,15 @@ export class EmployeesComponent implements OnInit {
       data: null
     });
 
-    dialogRef.afterClosed().subscribe(result => {
+    dialogRef.afterClosed().subscribe((result: EmployeeDialogResult | undefined) => {
       if (result) {
-        this.dataService.addEmployee(result);
+        this.dataService.addEmployee({
+          firstName: result.firstName,
+          lastName: result.lastName,
+          jobRole: result.jobRole,
+          email: result.email,
+          phone: result.phone
+        }).subscribe();
       }
     });
   }
@@ -185,16 +148,22 @@ export class EmployeesComponent implements OnInit {
       data: { ...employee }
     });
 
-    dialogRef.afterClosed().subscribe(result => {
+    dialogRef.afterClosed().subscribe((result: EmployeeDialogResult | undefined) => {
       if (result) {
-        this.dataService.updateEmployee(result);
+        this.dataService.updateEmployee(employee.id, {
+          firstName: result.firstName,
+          lastName: result.lastName,
+          jobRole: result.jobRole,
+          email: result.email,
+          phone: result.phone
+        }).subscribe();
       }
     });
   }
 
   deleteEmployee(employee: Employee): void {
-    if (confirm(`Are you sure you want to delete ${employee.name}?`)) {
-      this.dataService.deleteEmployee(employee.id);
+    if (confirm(`Are you sure you want to delete ${employee.firstName} ${employee.lastName}?`)) {
+      this.dataService.deleteEmployee(employee.id).subscribe();
     }
   }
 }

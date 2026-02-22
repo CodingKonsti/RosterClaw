@@ -8,6 +8,15 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatSelectModule } from '@angular/material/select';
 import { Employee } from '../../models/employee.model';
 
+export interface EmployeeDialogResult {
+  id?: string;
+  firstName: string;
+  lastName: string;
+  jobRole: string;
+  email: string;
+  phone: string;
+}
+
 @Component({
   selector: 'app-employee-dialog',
   standalone: true,
@@ -25,15 +34,22 @@ import { Employee } from '../../models/employee.model';
     <mat-dialog-content>
       <div class="form-field">
         <mat-form-field appearance="outline" class="full-width">
-          <mat-label>Name</mat-label>
-          <input matInput [(ngModel)]="employee.name" required>
+          <mat-label>First Name</mat-label>
+          <input matInput [(ngModel)]="employee.firstName" required>
         </mat-form-field>
       </div>
 
       <div class="form-field">
         <mat-form-field appearance="outline" class="full-width">
-          <mat-label>Role</mat-label>
-          <mat-select [(ngModel)]="employee.role" required>
+          <mat-label>Last Name</mat-label>
+          <input matInput [(ngModel)]="employee.lastName" required>
+        </mat-form-field>
+      </div>
+
+      <div class="form-field">
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Job Role</mat-label>
+          <mat-select [(ngModel)]="employee.jobRole" required>
             <mat-option value="Nurse">Nurse</mat-option>
             <mat-option value="Doctor">Doctor</mat-option>
             <mat-option value="Assistant">Assistant</mat-option>
@@ -88,7 +104,7 @@ import { Employee } from '../../models/employee.model';
   `]
 })
 export class EmployeeDialogComponent {
-  employee: Employee;
+  employee: EmployeeDialogResult;
   isEdit: boolean;
 
   constructor(
@@ -96,18 +112,25 @@ export class EmployeeDialogComponent {
     @Inject(MAT_DIALOG_DATA) public data: Employee | null
   ) {
     this.isEdit = !!data;
-    this.employee = data ? { ...data } : {
-      id: this.generateId(),
-      name: '',
-      role: '',
+    this.employee = data ? {
+      id: data.id,
+      firstName: data.firstName,
+      lastName: data.lastName,
+      jobRole: data.jobRole,
+      email: data.email,
+      phone: data.phone
+    } : {
+      firstName: '',
+      lastName: '',
+      jobRole: '',
       email: '',
       phone: ''
     };
   }
 
   isValid(): boolean {
-    return !!(this.employee.name && this.employee.role && 
-              this.employee.email && this.employee.phone);
+    return !!(this.employee.firstName && this.employee.lastName &&
+              this.employee.jobRole && this.employee.email && this.employee.phone);
   }
 
   onSave(): void {
@@ -118,9 +141,5 @@ export class EmployeeDialogComponent {
 
   onCancel(): void {
     this.dialogRef.close();
-  }
-
-  private generateId(): string {
-    return 'emp' + Date.now();
   }
 }

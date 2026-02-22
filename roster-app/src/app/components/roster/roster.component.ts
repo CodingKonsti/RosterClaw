@@ -62,7 +62,6 @@ interface DayColumn {
       <!-- Mobile Grid View -->
       <div class="roster-grid-container mobile-grid" *ngIf="isMobile">
         <div class="roster-grid">
-          <!-- Header Row -->
           <div class="grid-header">
             <div class="employee-header mobile-employee-header">Name</div>
             <div class="day-header mobile-day-header" *ngFor="let day of days">
@@ -70,28 +69,24 @@ interface DayColumn {
               <div class="day-date">{{ formatDateShort(day.date) }}</div>
             </div>
           </div>
-
-          <!-- Employee Rows -->
           <div class="employee-row mobile-employee-row" *ngFor="let employee of employees">
             <div class="employee-cell mobile-employee-cell">
-              <div class="employee-name mobile-employee-name">{{ employee.name }}</div>
+              <div class="employee-name mobile-employee-name">{{ employee.firstName }} {{ employee.lastName }}</div>
             </div>
-            <div 
+            <div
               class="shift-cell mobile-shift-cell"
               *ngFor="let day of days"
               [matMenuTriggerFor]="shiftMenu"
               [matMenuTriggerData]="{employee: employee, date: day.dateStr}"
               (click)="selectCell(employee, day.dateStr)">
-              <div 
+              <div
                 class="shift-badge mobile-shift-badge"
                 *ngIf="getShift(employee.id, day.dateStr) as shift"
                 [style.background-color]="shift.color"
                 [matTooltip]="shift.name + ' (' + shift.startTime + ' - ' + shift.endTime + ')'">
                 {{ getShortShiftName(shift.name) }}
               </div>
-              <div class="empty-cell" *ngIf="!getShift(employee.id, day.dateStr)">
-                +
-              </div>
+              <div class="empty-cell" *ngIf="!getShift(employee.id, day.dateStr)">+</div>
             </div>
           </div>
         </div>
@@ -100,7 +95,6 @@ interface DayColumn {
       <!-- Desktop Table View -->
       <div class="roster-grid-container" *ngIf="!isMobile">
         <div class="roster-grid">
-          <!-- Header Row -->
           <div class="grid-header">
             <div class="employee-header">Employee</div>
             <div class="day-header" *ngFor="let day of days">
@@ -108,38 +102,33 @@ interface DayColumn {
               <div class="day-date">{{ formatDate(day.date) }}</div>
             </div>
           </div>
-
-          <!-- Employee Rows -->
           <div class="employee-row" *ngFor="let employee of employees">
             <div class="employee-cell">
-              <div class="employee-name">{{ employee.name }}</div>
-              <div class="employee-role">{{ employee.role }}</div>
+              <div class="employee-name">{{ employee.firstName }} {{ employee.lastName }}</div>
+              <div class="employee-role">{{ employee.jobRole }}</div>
             </div>
-            <div 
+            <div
               class="shift-cell"
               *ngFor="let day of days"
               [matMenuTriggerFor]="shiftMenu"
               [matMenuTriggerData]="{employee: employee, date: day.dateStr}"
               (click)="selectCell(employee, day.dateStr)">
-              <div 
+              <div
                 class="shift-badge"
                 *ngIf="getShift(employee.id, day.dateStr) as shift"
                 [style.background-color]="shift.color"
                 [matTooltip]="shift.name + ' (' + shift.startTime + ' - ' + shift.endTime + ')'">
                 {{ shift.name }}
               </div>
-              <div class="empty-cell" *ngIf="!getShift(employee.id, day.dateStr)">
-                +
-              </div>
+              <div class="empty-cell" *ngIf="!getShift(employee.id, day.dateStr)">+</div>
             </div>
           </div>
         </div>
       </div>
 
-      <!-- Context Menu for Shift Assignment -->
       <mat-menu #shiftMenu="matMenu">
         <ng-template matMenuContent let-employee="employee" let-date="date">
-          <button mat-menu-item *ngFor="let shiftType of shiftTypes" 
+          <button mat-menu-item *ngFor="let shiftType of shiftTypes"
                   (click)="assignShift(employee, date, shiftType)">
             <div class="menu-shift-item">
               <div class="menu-color-box" [style.background-color]="shiftType.color"></div>
@@ -148,7 +137,7 @@ interface DayColumn {
             </div>
           </button>
           <mat-divider *ngIf="getShift(employee.id, date)"></mat-divider>
-          <button mat-menu-item *ngIf="getShift(employee.id, date)" 
+          <button mat-menu-item *ngIf="getShift(employee.id, date)"
                   (click)="removeShift(employee.id, date)"
                   class="remove-shift">
             <mat-icon>delete</mat-icon>
@@ -159,316 +148,60 @@ interface DayColumn {
     </div>
   `,
   styles: [`
-    .roster-container {
-      padding: 20px;
-      height: calc(100vh - 40px);
-      display: flex;
-      flex-direction: column;
-    }
-
-    .header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 12px;
-      flex-wrap: wrap;
-      gap: 12px;
-    }
-
-    .header h1 {
-      margin: 0;
-      font-size: 24px;
-    }
-
-    .controls {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
-
-    .period-label-mobile {
-      display: none;
-      font-weight: 500;
-      font-size: 16px;
-      margin-bottom: 12px;
-      text-align: center;
-    }
-
-    .roster-grid-container {
-      flex: 1;
-      background: white;
-      border-radius: 8px;
-      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-      overflow: auto;
-    }
-
-    .roster-grid {
-      min-width: max-content;
-    }
-
-    .grid-header {
-      display: flex;
-      position: sticky;
-      top: 0;
-      background: white;
-      z-index: 10;
-      border-bottom: 2px solid #e0e0e0;
-    }
-
-    .employee-header {
-      width: 200px;
-      min-width: 200px;
-      padding: 16px;
-      font-weight: 600;
-      background: #f5f5f5;
-      position: sticky;
-      left: 0;
-      z-index: 11;
-    }
-
-    .day-header {
-      width: 120px;
-      min-width: 120px;
-      padding: 8px;
-      text-align: center;
-      background: #f5f5f5;
-      border-left: 1px solid #e0e0e0;
-    }
-
-    .day-name {
-      font-weight: 600;
-      font-size: 14px;
-    }
-
-    .day-date {
-      font-size: 12px;
-      color: #666;
-      margin-top: 4px;
-    }
-
-    .employee-row {
-      display: flex;
-      border-bottom: 1px solid #e0e0e0;
-    }
-
-    .employee-row:hover {
-      background-color: #f9f9f9;
-    }
-
-    .employee-cell {
-      width: 200px;
-      min-width: 200px;
-      padding: 12px 16px;
-      position: sticky;
-      left: 0;
-      background: white;
-      z-index: 5;
-      border-right: 1px solid #e0e0e0;
-    }
-
-    .employee-row:hover .employee-cell {
-      background-color: #f9f9f9;
-    }
-
-    .employee-name {
-      font-weight: 500;
-      font-size: 14px;
-    }
-
-    .employee-role {
-      font-size: 12px;
-      color: #666;
-      margin-top: 2px;
-    }
-
-    .shift-cell {
-      width: 120px;
-      min-width: 120px;
-      padding: 8px;
-      border-left: 1px solid #e0e0e0;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-
-    .shift-cell:hover {
-      background-color: #f0f0f0;
-    }
-
-    .shift-badge {
-      padding: 6px 12px;
-      border-radius: 4px;
-      color: white;
-      font-size: 12px;
-      font-weight: 500;
-      text-align: center;
-      width: 100%;
-    }
-
-    .empty-cell {
-      color: #ccc;
-      font-size: 20px;
-      opacity: 0;
-      transition: opacity 0.2s;
-    }
-
-    .shift-cell:hover .empty-cell {
-      opacity: 1;
-    }
-
-    .menu-shift-item {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
-
-    .menu-color-box {
-      width: 20px;
-      height: 20px;
-      border-radius: 4px;
-    }
-
-    .menu-time {
-      font-size: 12px;
-      color: #666;
-      margin-left: auto;
-    }
-
-    .remove-shift {
-      color: #f44336;
-    }
-
-    mat-form-field {
-      width: 120px;
-    }
-
-    /* Mobile compact grid */
-
-    /* Mobile Grid Styles */
-    .mobile-grid {
-      /* Enable horizontal scrolling */
-      overflow-x: auto;
-      overflow-y: auto;
-      -webkit-overflow-scrolling: touch;
-    }
-
-    .mobile-employee-header {
-      width: 120px !important;
-      min-width: 120px !important;
-      font-size: 13px;
-      padding: 12px 8px !important;
-    }
-
-    .mobile-day-header {
-      width: 65px !important;
-      min-width: 65px !important;
-      padding: 8px 4px !important;
-    }
-
-    .mobile-day-header .day-name {
-      font-size: 12px;
-    }
-
-    .mobile-day-header .day-date {
-      font-size: 10px;
-    }
-
-    .mobile-employee-row {
-      min-height: 48px; /* Touch-friendly height */
-    }
-
-    .mobile-employee-cell {
-      width: 120px !important;
-      min-width: 120px !important;
-      padding: 8px !important;
-    }
-
-    .mobile-employee-name {
-      font-size: 13px;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
-
-    .mobile-shift-cell {
-      width: 65px !important;
-      min-width: 65px !important;
-      padding: 4px !important;
-      min-height: 48px; /* Touch-friendly */
-    }
-
-    .mobile-shift-badge {
-      padding: 4px 2px !important;
-      font-size: 14px !important;
-      font-weight: 600 !important;
-      border-radius: 4px;
-    }
-
-    /* Responsive breakpoints */
+    .roster-container { padding: 20px; height: calc(100vh - 40px); display: flex; flex-direction: column; }
+    .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; flex-wrap: wrap; gap: 12px; }
+    .header h1 { margin: 0; font-size: 24px; }
+    .controls { display: flex; align-items: center; gap: 8px; }
+    .period-label-mobile { display: none; font-weight: 500; font-size: 16px; margin-bottom: 12px; text-align: center; }
+    .roster-grid-container { flex: 1; background: white; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); overflow: auto; }
+    .roster-grid { min-width: max-content; }
+    .grid-header { display: flex; position: sticky; top: 0; background: white; z-index: 10; border-bottom: 2px solid #e0e0e0; }
+    .employee-header { width: 200px; min-width: 200px; padding: 16px; font-weight: 600; background: #f5f5f5; position: sticky; left: 0; z-index: 11; }
+    .day-header { width: 120px; min-width: 120px; padding: 8px; text-align: center; background: #f5f5f5; border-left: 1px solid #e0e0e0; }
+    .day-name { font-weight: 600; font-size: 14px; }
+    .day-date { font-size: 12px; color: #666; margin-top: 4px; }
+    .employee-row { display: flex; border-bottom: 1px solid #e0e0e0; }
+    .employee-row:hover { background-color: #f9f9f9; }
+    .employee-cell { width: 200px; min-width: 200px; padding: 12px 16px; position: sticky; left: 0; background: white; z-index: 5; border-right: 1px solid #e0e0e0; }
+    .employee-row:hover .employee-cell { background-color: #f9f9f9; }
+    .employee-name { font-weight: 500; font-size: 14px; }
+    .employee-role { font-size: 12px; color: #666; margin-top: 2px; }
+    .shift-cell { width: 120px; min-width: 120px; padding: 8px; border-left: 1px solid #e0e0e0; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+    .shift-cell:hover { background-color: #f0f0f0; }
+    .shift-badge { padding: 6px 12px; border-radius: 4px; color: white; font-size: 12px; font-weight: 500; text-align: center; width: 100%; }
+    .empty-cell { color: #ccc; font-size: 20px; opacity: 0; transition: opacity 0.2s; }
+    .shift-cell:hover .empty-cell { opacity: 1; }
+    .menu-shift-item { display: flex; align-items: center; gap: 8px; }
+    .menu-color-box { width: 20px; height: 20px; border-radius: 4px; }
+    .menu-time { font-size: 12px; color: #666; margin-left: auto; }
+    .remove-shift { color: #f44336; }
+    mat-form-field { width: 120px; }
+    .mobile-grid { overflow-x: auto; overflow-y: auto; -webkit-overflow-scrolling: touch; }
+    .mobile-employee-header { width: 120px !important; min-width: 120px !important; font-size: 13px; padding: 12px 8px !important; }
+    .mobile-day-header { width: 65px !important; min-width: 65px !important; padding: 8px 4px !important; }
+    .mobile-day-header .day-name { font-size: 12px; }
+    .mobile-day-header .day-date { font-size: 10px; }
+    .mobile-employee-row { min-height: 48px; }
+    .mobile-employee-cell { width: 120px !important; min-width: 120px !important; padding: 8px !important; }
+    .mobile-employee-name { font-size: 13px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .mobile-shift-cell { width: 65px !important; min-width: 65px !important; padding: 4px !important; min-height: 48px; }
+    .mobile-shift-badge { padding: 4px 2px !important; font-size: 14px !important; font-weight: 600 !important; border-radius: 4px; }
     @media (max-width: 768px) {
-      .roster-container {
-        padding: 12px;
-      }
-
-      .header h1 {
-        font-size: 20px;
-        flex: 1 1 100%;
-      }
-
-      .controls {
-        width: 100%;
-        justify-content: center;
-      }
-
-      .period-label-mobile {
-        display: block;
-      }
-
-      .view-select {
-        width: 100px;
-      }
-
-      .today-btn {
-        font-size: 13px;
-        min-width: 60px;
-      }
-
-      mat-form-field {
-        width: 100px;
-      }
+      .roster-container { padding: 12px; }
+      .header h1 { font-size: 20px; flex: 1 1 100%; }
+      .controls { width: 100%; justify-content: center; }
+      .period-label-mobile { display: block; }
+      .view-select { width: 100px; }
+      .today-btn { font-size: 13px; min-width: 60px; }
+      mat-form-field { width: 100px; }
     }
-
     @media (max-width: 480px) {
-      .controls {
-        gap: 4px;
-      }
-
-      .view-select {
-        width: 85px;
-      }
-
-      mat-form-field {
-        width: 85px;
-      }
-
-      .today-btn {
-        min-width: 50px;
-        padding: 0 8px;
-      }
-
-      /* Even more compact on very small screens */
-      .mobile-employee-header,
-      .mobile-employee-cell {
-        width: 100px !important;
-        min-width: 100px !important;
-      }
-
-      .mobile-day-header,
-      .mobile-shift-cell {
-        width: 60px !important;
-        min-width: 60px !important;
-      }
+      .controls { gap: 4px; }
+      .view-select { width: 85px; }
+      mat-form-field { width: 85px; }
+      .today-btn { min-width: 50px; padding: 0 8px; }
+      .mobile-employee-header, .mobile-employee-cell { width: 100px !important; min-width: 100px !important; }
+      .mobile-day-header, .mobile-shift-cell { width: 60px !important; min-width: 60px !important; }
     }
   `]
 })
@@ -492,6 +225,8 @@ export class RosterComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    this.dataService.loadAll();
+
     this.dataService.getEmployees().subscribe(employees => {
       this.employees = employees;
     });
@@ -507,9 +242,7 @@ export class RosterComponent implements OnInit {
     this.updateDays();
   }
 
-  onViewModeChange(): void {
-    this.updateDays();
-  }
+  onViewModeChange(): void { this.updateDays(); }
 
   previousPeriod(): void {
     if (this.viewMode === 'week') {
@@ -552,7 +285,6 @@ export class RosterComponent implements OnInit {
   }
 
   formatDateShort(date: Date): string {
-    // Very short format for mobile: just day number
     return date.getDate().toString();
   }
 
@@ -561,12 +293,11 @@ export class RosterComponent implements OnInit {
   }
 
   getShortShiftName(shiftName: string): string {
-    // Return first letter of shift name for mobile compact view
     return shiftName.charAt(0).toUpperCase();
   }
 
   getShift(employeeId: string, dateStr: string): ShiftType | null {
-    const assignment = this.shiftAssignments.find(a => 
+    const assignment = this.shiftAssignments.find(a =>
       a.employeeId === employeeId && a.date === dateStr
     );
     if (assignment) {
@@ -575,48 +306,45 @@ export class RosterComponent implements OnInit {
     return null;
   }
 
-  selectCell(employee: Employee, date: string): void {
-    // This is called when a cell is clicked, menu will open automatically
-  }
+  selectCell(employee: Employee, date: string): void {}
 
   assignShift(employee: Employee, date: string, shiftType: ShiftType): void {
-    // Remove existing assignment if any
-    const existing = this.shiftAssignments.find(a => 
+    const existing = this.shiftAssignments.find(a =>
       a.employeeId === employee.id && a.date === date
     );
     if (existing) {
-      this.dataService.deleteShiftAssignment(existing.id);
+      this.dataService.deleteShiftAssignment(existing.id).subscribe(() => {
+        this.dataService.addShiftAssignment({
+          employeeId: employee.id,
+          shiftTypeId: shiftType.id,
+          date: date
+        }).subscribe();
+      });
+    } else {
+      this.dataService.addShiftAssignment({
+        employeeId: employee.id,
+        shiftTypeId: shiftType.id,
+        date: date
+      }).subscribe();
     }
-
-    // Add new assignment
-    const assignment: ShiftAssignment = {
-      id: 'assign' + Date.now(),
-      employeeId: employee.id,
-      shiftTypeId: shiftType.id,
-      date: date
-    };
-    this.dataService.addShiftAssignment(assignment);
   }
 
   removeShift(employeeId: string, date: string): void {
-    const assignment = this.shiftAssignments.find(a => 
+    const assignment = this.shiftAssignments.find(a =>
       a.employeeId === employeeId && a.date === date
     );
     if (assignment) {
-      this.dataService.deleteShiftAssignment(assignment.id);
+      this.dataService.deleteShiftAssignment(assignment.id).subscribe();
     }
   }
 
   private updateDays(): void {
     this.days = [];
     if (this.viewMode === 'week') {
-      // Get start of week (Monday)
       const date = new Date(this.currentDate);
       const day = date.getDay();
       const diff = date.getDate() - day + (day === 0 ? -6 : 1);
       date.setDate(diff);
-
-      // Generate 7 days
       for (let i = 0; i < 7; i++) {
         const current = new Date(date);
         current.setDate(date.getDate() + i);
@@ -627,12 +355,10 @@ export class RosterComponent implements OnInit {
         });
       }
     } else {
-      // Month view - get all days in current month
       const year = this.currentDate.getFullYear();
       const month = this.currentDate.getMonth();
       const firstDay = new Date(year, month, 1);
       const lastDay = new Date(year, month + 1, 0);
-
       for (let d = new Date(firstDay); d <= lastDay; d.setDate(d.getDate() + 1)) {
         const current = new Date(d);
         this.days.push({

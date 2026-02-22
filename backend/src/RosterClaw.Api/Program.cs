@@ -57,6 +57,9 @@ builder.Services.AddCors(options =>
 // Application services
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IRoleService, RoleService>();
+builder.Services.AddScoped<IEmployeeService, EmployeeService>();
+builder.Services.AddScoped<IShiftTypeService, ShiftTypeService>();
+builder.Services.AddScoped<IShiftAssignmentService, ShiftAssignmentService>();
 
 builder.Services.AddControllers();
 
