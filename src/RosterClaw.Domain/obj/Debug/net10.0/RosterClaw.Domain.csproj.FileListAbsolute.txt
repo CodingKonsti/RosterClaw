@@ -1,0 +1,12 @@
+/home/node/.openclaw/workspace/testClaw/src/RosterClaw.Domain/bin/Debug/net10.0/RosterClaw.Domain.deps.json
+/home/node/.openclaw/workspace/testClaw/src/RosterClaw.Domain/bin/Debug/net10.0/RosterClaw.Domain.dll
+/home/node/.openclaw/workspace/testClaw/src/RosterClaw.Domain/bin/Debug/net10.0/RosterClaw.Domain.pdb
+/home/node/.openclaw/workspace/testClaw/src/RosterClaw.Domain/obj/Debug/net10.0/RosterClaw.Domain.GeneratedMSBuildEditorConfig.editorconfig
+/home/node/.openclaw/workspace/testClaw/src/RosterClaw.Domain/obj/Debug/net10.0/RosterClaw.Domain.AssemblyInfoInputs.cache
+/home/node/.openclaw/workspace/testClaw/src/RosterClaw.Domain/obj/Debug/net10.0/RosterClaw.Domain.AssemblyInfo.cs
+/home/node/.openclaw/workspace/testClaw/src/RosterClaw.Domain/obj/Debug/net10.0/RosterClaw.Domain.csproj.CoreCompileInputs.cache
+/home/node/.openclaw/workspace/testClaw/src/RosterClaw.Domain/obj/Debug/net10.0/RosterClaw.Domain.sourcelink.json
+/home/node/.openclaw/workspace/testClaw/src/RosterClaw.Domain/obj/Debug/net10.0/RosterClaw.Domain.dll
+/home/node/.openclaw/workspace/testClaw/src/RosterClaw.Domain/obj/Debug/net10.0/refint/RosterClaw.Domain.dll
+/home/node/.openclaw/workspace/testClaw/src/RosterClaw.Domain/obj/Debug/net10.0/RosterClaw.Domain.pdb
+/home/node/.openclaw/workspace/testClaw/src/RosterClaw.Domain/obj/Debug/net10.0/ref/RosterClaw.Domain.dll
