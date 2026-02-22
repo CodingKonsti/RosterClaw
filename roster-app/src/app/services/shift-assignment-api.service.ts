@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { ShiftAssignment } from '../models/shift-assignment.model';
@@ -11,8 +11,9 @@ export interface CreateShiftAssignmentDto {
 
 @Injectable({ providedIn: 'root' })
 export class ShiftAssignmentApiService {
+  private http = inject(HttpClient);
+
   private url = '/api/shiftassignments';
-  constructor(private http: HttpClient) {}
 
   getAll(): Observable<ShiftAssignment[]> {
     return this.http.get<ShiftAssignment[]>(this.url, { withCredentials: true });

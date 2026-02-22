@@ -1,5 +1,5 @@
-import { Component, Inject } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { Component, inject } from '@angular/core';
+
 import { FormsModule } from '@angular/forms';
 import { MatDialogModule, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { MatButtonModule } from '@angular/material/button';
@@ -11,13 +11,12 @@ import { ShiftType } from '../../models/shift-type.model';
   selector: 'app-shift-type-dialog',
   standalone: true,
   imports: [
-    CommonModule,
     FormsModule,
     MatDialogModule,
     MatButtonModule,
     MatInputModule,
     MatFormFieldModule
-  ],
+],
   template: `
     <h2 mat-dialog-title>{{ isEdit ? 'Edit Shift Type' : 'Add Shift Type' }}</h2>
     <mat-dialog-content>
@@ -43,9 +42,9 @@ import { ShiftType } from '../../models/shift-type.model';
       </div>
 
       <div class="form-field">
-        <label>Color</label>
+        <label for="colorInput">Color</label>
         <div class="color-picker-container">
-          <input type="color" [(ngModel)]="shiftType.color" class="color-picker">
+          <input id="colorInput" type="color" [(ngModel)]="shiftType.color" class="color-picker">
           <span class="color-value">{{ shiftType.color }}</span>
         </div>
       </div>
@@ -109,13 +108,15 @@ import { ShiftType } from '../../models/shift-type.model';
   `]
 })
 export class ShiftTypeDialogComponent {
+  dialogRef = inject<MatDialogRef<ShiftTypeDialogComponent>>(MatDialogRef);
+  data = inject<ShiftType | null>(MAT_DIALOG_DATA);
+
   shiftType: ShiftType;
   isEdit: boolean;
 
-  constructor(
-    public dialogRef: MatDialogRef<ShiftTypeDialogComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: ShiftType | null
-  ) {
+  constructor() {
+    const data = this.data;
+
     this.isEdit = !!data;
     this.shiftType = data ? { ...data } : {
       id: this.generateId(),

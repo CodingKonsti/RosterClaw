@@ -1,18 +1,17 @@
-import { Component, ViewChild, HostListener } from '@angular/core';
+import { Component, ViewChild, inject } from '@angular/core';
 import { RouterOutlet, RouterLink, RouterLinkActive } from '@angular/router';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatSidenavModule, MatDrawer } from '@angular/material/sidenav';
 import { MatListModule } from '@angular/material/list';
-import { CommonModule } from '@angular/common';
+
 import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
 
 @Component({
   selector: 'app-root',
   standalone: true,
   imports: [
-    CommonModule,
     RouterOutlet,
     RouterLink,
     RouterLinkActive,
@@ -21,7 +20,7 @@ import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
     MatIconModule,
     MatSidenavModule,
     MatListModule
-  ],
+],
   template: `
     <mat-toolbar color="primary" class="app-toolbar">
       <button mat-icon-button (click)="drawer.toggle()">
@@ -109,13 +108,15 @@ import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
   `]
 })
 export class AppComponent {
+  private breakpointObserver = inject(BreakpointObserver);
+
   @ViewChild('drawer') drawer!: MatDrawer;
   title = 'Duty Roster Planning';
   isMobile = false;
   drawerMode: 'side' | 'over' = 'side';
   drawerOpened = true;
 
-  constructor(private breakpointObserver: BreakpointObserver) {
+  constructor() {
     this.breakpointObserver.observe([Breakpoints.Handset, Breakpoints.Tablet])
       .subscribe(result => {
         this.isMobile = result.matches;

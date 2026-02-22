@@ -1,5 +1,5 @@
-import { Component, OnInit } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { Component, OnInit, inject } from '@angular/core';
+
 import { FormsModule } from '@angular/forms';
 import { MatTableModule } from '@angular/material/table';
 import { MatButtonModule } from '@angular/material/button';
@@ -14,13 +14,12 @@ import { ShiftTypeDialogComponent } from '../shift-type-dialog/shift-type-dialog
   selector: 'app-shift-types',
   standalone: true,
   imports: [
-    CommonModule,
     FormsModule,
     MatTableModule,
     MatButtonModule,
     MatIconModule,
     MatDialogModule
-  ],
+],
   template: `
     <div class="shift-types-container">
       <div class="header">
@@ -89,15 +88,15 @@ import { ShiftTypeDialogComponent } from '../shift-type-dialog/shift-type-dialog
   `]
 })
 export class ShiftTypesComponent implements OnInit {
+  private dataService = inject(DataService);
+  private dialog = inject(MatDialog);
+  private breakpointObserver = inject(BreakpointObserver);
+
   shiftTypes: ShiftType[] = [];
   displayedColumns: string[] = ['color', 'name', 'time', 'actions'];
   isMobile = false;
 
-  constructor(
-    private dataService: DataService,
-    private dialog: MatDialog,
-    private breakpointObserver: BreakpointObserver
-  ) {
+  constructor() {
     this.breakpointObserver.observe([Breakpoints.Handset])
       .subscribe(result => {
         this.isMobile = result.matches;

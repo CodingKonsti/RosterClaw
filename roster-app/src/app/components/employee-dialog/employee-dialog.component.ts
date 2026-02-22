@@ -1,5 +1,5 @@
-import { Component, Inject } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { Component, inject } from '@angular/core';
+
 import { FormsModule } from '@angular/forms';
 import { MatDialogModule, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { MatButtonModule } from '@angular/material/button';
@@ -21,14 +21,13 @@ export interface EmployeeDialogResult {
   selector: 'app-employee-dialog',
   standalone: true,
   imports: [
-    CommonModule,
     FormsModule,
     MatDialogModule,
     MatButtonModule,
     MatInputModule,
     MatFormFieldModule,
     MatSelectModule
-  ],
+],
   template: `
     <h2 mat-dialog-title>{{ isEdit ? 'Edit Employee' : 'Add Employee' }}</h2>
     <mat-dialog-content>
@@ -104,13 +103,15 @@ export interface EmployeeDialogResult {
   `]
 })
 export class EmployeeDialogComponent {
+  dialogRef = inject<MatDialogRef<EmployeeDialogComponent>>(MatDialogRef);
+  data = inject<Employee | null>(MAT_DIALOG_DATA);
+
   employee: EmployeeDialogResult;
   isEdit: boolean;
 
-  constructor(
-    public dialogRef: MatDialogRef<EmployeeDialogComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: Employee | null
-  ) {
+  constructor() {
+    const data = this.data;
+
     this.isEdit = !!data;
     this.employee = data ? {
       id: data.id,

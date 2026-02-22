@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
@@ -6,12 +6,12 @@ import { MatCardModule } from '@angular/material/card';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
-import { CommonModule } from '@angular/common';
+
 
 @Component({
   selector: 'app-login',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, MatCardModule, MatFormFieldModule, MatInputModule, MatButtonModule],
+  imports: [ReactiveFormsModule, MatCardModule, MatFormFieldModule, MatInputModule, MatButtonModule],
   template: `
     <div class="login-container">
       <mat-card class="login-card">
@@ -28,7 +28,9 @@ import { CommonModule } from '@angular/common';
               <mat-label>Password</mat-label>
               <input matInput type="password" formControlName="password" />
             </mat-form-field>
-            <div *ngIf="error" class="error">{{ error }}</div>
+            @if (error) {
+              <div class="error">{{ error }}</div>
+            }
             <button mat-raised-button color="primary" type="submit" [disabled]="form.invalid || loading" class="full-width">
               {{ loading ? 'Signing in...' : 'Sign In' }}
             </button>
@@ -36,7 +38,7 @@ import { CommonModule } from '@angular/common';
         </mat-card-content>
       </mat-card>
     </div>
-  `,
+    `,
   styles: [`
     .login-container { display: flex; justify-content: center; align-items: center; height: 100vh; }
     .login-card { width: 400px; padding: 16px; }
@@ -45,11 +47,15 @@ import { CommonModule } from '@angular/common';
   `]
 })
 export class LoginComponent {
+  private fb = inject(FormBuilder);
+  private auth = inject(AuthService);
+  private router = inject(Router);
+
   form: FormGroup;
   error = '';
   loading = false;
 
-  constructor(private fb: FormBuilder, private auth: AuthService, private router: Router) {
+  constructor() {
     this.form = this.fb.group({
       email: ['', [Validators.required, Validators.email]],
       password: ['', Validators.required]

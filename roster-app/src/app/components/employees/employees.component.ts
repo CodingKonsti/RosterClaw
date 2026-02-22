@@ -1,5 +1,5 @@
-import { Component, OnInit } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { Component, OnInit, inject } from '@angular/core';
+
 import { FormsModule } from '@angular/forms';
 import { MatTableModule } from '@angular/material/table';
 import { MatButtonModule } from '@angular/material/button';
@@ -17,7 +17,6 @@ import { EmployeeDialogComponent, EmployeeDialogResult } from '../employee-dialo
   selector: 'app-employees',
   standalone: true,
   imports: [
-    CommonModule,
     FormsModule,
     MatTableModule,
     MatButtonModule,
@@ -26,7 +25,7 @@ import { EmployeeDialogComponent, EmployeeDialogResult } from '../employee-dialo
     MatInputModule,
     MatFormFieldModule,
     MatSelectModule
-  ],
+],
   template: `
     <div class="employees-container">
       <div class="header">
@@ -95,15 +94,15 @@ import { EmployeeDialogComponent, EmployeeDialogResult } from '../employee-dialo
   `]
 })
 export class EmployeesComponent implements OnInit {
+  private dataService = inject(DataService);
+  private dialog = inject(MatDialog);
+  private breakpointObserver = inject(BreakpointObserver);
+
   employees: Employee[] = [];
   displayedColumns: string[] = ['name', 'role', 'email', 'phone', 'actions'];
   isMobile = false;
 
-  constructor(
-    private dataService: DataService,
-    private dialog: MatDialog,
-    private breakpointObserver: BreakpointObserver
-  ) {
+  constructor() {
     this.breakpointObserver.observe([Breakpoints.Handset])
       .subscribe(result => {
         this.isMobile = result.matches;

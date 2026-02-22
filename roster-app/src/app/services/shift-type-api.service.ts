@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { ShiftType } from '../models/shift-type.model';
@@ -12,8 +12,9 @@ export interface CreateShiftTypeDto {
 
 @Injectable({ providedIn: 'root' })
 export class ShiftTypeApiService {
+  private http = inject(HttpClient);
+
   private url = '/api/shifttypes';
-  constructor(private http: HttpClient) {}
 
   getAll(): Observable<ShiftType[]> {
     return this.http.get<ShiftType[]>(this.url, { withCredentials: true });

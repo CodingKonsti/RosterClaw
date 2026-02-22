@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { tap } from 'rxjs/operators';
 import { Employee } from '../models/employee.model';
@@ -10,15 +10,13 @@ import { ShiftAssignmentApiService, CreateShiftAssignmentDto } from './shift-ass
 
 @Injectable({ providedIn: 'root' })
 export class DataService {
+  private employeeApi = inject(EmployeeApiService);
+  private shiftTypeApi = inject(ShiftTypeApiService);
+  private shiftAssignmentApi = inject(ShiftAssignmentApiService);
+
   private employees$ = new BehaviorSubject<Employee[]>([]);
   private shiftTypes$ = new BehaviorSubject<ShiftType[]>([]);
   private shiftAssignments$ = new BehaviorSubject<ShiftAssignment[]>([]);
-
-  constructor(
-    private employeeApi: EmployeeApiService,
-    private shiftTypeApi: ShiftTypeApiService,
-    private shiftAssignmentApi: ShiftAssignmentApiService
-  ) {}
 
   loadAll(): void {
     this.employeeApi.getAll().subscribe(data => this.employees$.next(data));

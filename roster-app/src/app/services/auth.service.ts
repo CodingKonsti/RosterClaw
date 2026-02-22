@@ -1,4 +1,4 @@
-import { Injectable, signal } from '@angular/core';
+import { Injectable, signal, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, tap } from 'rxjs';
 
@@ -14,9 +14,9 @@ export interface UserInfo {
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
-  private loggedIn = signal(false);
+  private http = inject(HttpClient);
 
-  constructor(private http: HttpClient) {}
+  private loggedIn = signal(false);
 
   login(credentials: LoginRequest): Observable<void> {
     return this.http.post<void>('/api/login?useCookies=true', credentials, { withCredentials: true }).pipe(

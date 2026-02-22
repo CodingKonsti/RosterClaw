@@ -1,5 +1,5 @@
-import { Component, OnInit } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { Component, OnInit, inject } from '@angular/core';
+
 import { FormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
@@ -25,7 +25,6 @@ interface DayColumn {
   selector: 'app-roster',
   standalone: true,
   imports: [
-    CommonModule,
     FormsModule,
     MatButtonModule,
     MatIconModule,
@@ -35,7 +34,7 @@ interface DayColumn {
     MatTooltipModule,
     MatDividerModule,
     MatCardModule
-  ],
+],
   template: `
     <div class="roster-container">
       <div class="header">
@@ -58,95 +57,125 @@ interface DayColumn {
         </div>
       </div>
       <div class="period-label-mobile">{{ getPeriodLabel() }}</div>
-
+    
       <!-- Mobile Grid View -->
-      <div class="roster-grid-container mobile-grid" *ngIf="isMobile">
-        <div class="roster-grid">
-          <div class="grid-header">
-            <div class="employee-header mobile-employee-header">Name</div>
-            <div class="day-header mobile-day-header" *ngFor="let day of days">
-              <div class="day-name">{{ day.dayName }}</div>
-              <div class="day-date">{{ formatDateShort(day.date) }}</div>
+      @if (isMobile) {
+        <div class="roster-grid-container mobile-grid">
+          <div class="roster-grid">
+            <div class="grid-header">
+              <div class="employee-header mobile-employee-header">Name</div>
+              @for (day of days; track day) {
+                <div class="day-header mobile-day-header">
+                  <div class="day-name">{{ day.dayName }}</div>
+                  <div class="day-date">{{ formatDateShort(day.date) }}</div>
+                </div>
+              }
             </div>
-          </div>
-          <div class="employee-row mobile-employee-row" *ngFor="let employee of employees">
-            <div class="employee-cell mobile-employee-cell">
-              <div class="employee-name mobile-employee-name">{{ employee.firstName }} {{ employee.lastName }}</div>
-            </div>
-            <div
-              class="shift-cell mobile-shift-cell"
-              *ngFor="let day of days"
-              [matMenuTriggerFor]="shiftMenu"
-              [matMenuTriggerData]="{employee: employee, date: day.dateStr}"
-              (click)="selectCell(employee, day.dateStr)">
-              <div
-                class="shift-badge mobile-shift-badge"
-                *ngIf="getShift(employee.id, day.dateStr) as shift"
-                [style.background-color]="shift.color"
-                [matTooltip]="shift.name + ' (' + shift.startTime + ' - ' + shift.endTime + ')'">
-                {{ getShortShiftName(shift.name) }}
+            @for (employee of employees; track employee) {
+              <div class="employee-row mobile-employee-row">
+                <div class="employee-cell mobile-employee-cell">
+                  <div class="employee-name mobile-employee-name">{{ employee.firstName }} {{ employee.lastName }}</div>
+                </div>
+                @for (day of days; track day) {
+                  <div
+                    class="shift-cell mobile-shift-cell"
+                    [matMenuTriggerFor]="shiftMenu"
+                    [matMenuTriggerData]="{employee: employee, date: day.dateStr}"
+                    tabindex="0"
+                    (click)="selectCell(employee, day.dateStr)"
+                    (keydown.enter)="selectCell(employee, day.dateStr)">
+                    @if (getShift(employee.id, day.dateStr); as shift) {
+                      <div
+                        class="shift-badge mobile-shift-badge"
+                        [style.background-color]="shift.color"
+                        [matTooltip]="shift.name + ' (' + shift.startTime + ' - ' + shift.endTime + ')'">
+                        {{ getShortShiftName(shift.name) }}
+                      </div>
+                    }
+                    @if (!getShift(employee.id, day.dateStr)) {
+                      <div class="empty-cell">+</div>
+                    }
+                  </div>
+                }
               </div>
-              <div class="empty-cell" *ngIf="!getShift(employee.id, day.dateStr)">+</div>
-            </div>
+            }
           </div>
         </div>
-      </div>
-
+      }
+    
       <!-- Desktop Table View -->
-      <div class="roster-grid-container" *ngIf="!isMobile">
-        <div class="roster-grid">
-          <div class="grid-header">
-            <div class="employee-header">Employee</div>
-            <div class="day-header" *ngFor="let day of days">
-              <div class="day-name">{{ day.dayName }}</div>
-              <div class="day-date">{{ formatDate(day.date) }}</div>
+      @if (!isMobile) {
+        <div class="roster-grid-container">
+          <div class="roster-grid">
+            <div class="grid-header">
+              <div class="employee-header">Employee</div>
+              @for (day of days; track day) {
+                <div class="day-header">
+                  <div class="day-name">{{ day.dayName }}</div>
+                  <div class="day-date">{{ formatDate(day.date) }}</div>
+                </div>
+              }
             </div>
-          </div>
-          <div class="employee-row" *ngFor="let employee of employees">
-            <div class="employee-cell">
-              <div class="employee-name">{{ employee.firstName }} {{ employee.lastName }}</div>
-              <div class="employee-role">{{ employee.jobRole }}</div>
-            </div>
-            <div
-              class="shift-cell"
-              *ngFor="let day of days"
-              [matMenuTriggerFor]="shiftMenu"
-              [matMenuTriggerData]="{employee: employee, date: day.dateStr}"
-              (click)="selectCell(employee, day.dateStr)">
-              <div
-                class="shift-badge"
-                *ngIf="getShift(employee.id, day.dateStr) as shift"
-                [style.background-color]="shift.color"
-                [matTooltip]="shift.name + ' (' + shift.startTime + ' - ' + shift.endTime + ')'">
-                {{ shift.name }}
+            @for (employee of employees; track employee) {
+              <div class="employee-row">
+                <div class="employee-cell">
+                  <div class="employee-name">{{ employee.firstName }} {{ employee.lastName }}</div>
+                  <div class="employee-role">{{ employee.jobRole }}</div>
+                </div>
+                @for (day of days; track day) {
+                  <div
+                    class="shift-cell"
+                    [matMenuTriggerFor]="shiftMenu"
+                    [matMenuTriggerData]="{employee: employee, date: day.dateStr}"
+                    tabindex="0"
+                    (click)="selectCell(employee, day.dateStr)"
+                    (keydown.enter)="selectCell(employee, day.dateStr)">
+                    @if (getShift(employee.id, day.dateStr); as shift) {
+                      <div
+                        class="shift-badge"
+                        [style.background-color]="shift.color"
+                        [matTooltip]="shift.name + ' (' + shift.startTime + ' - ' + shift.endTime + ')'">
+                        {{ shift.name }}
+                      </div>
+                    }
+                    @if (!getShift(employee.id, day.dateStr)) {
+                      <div class="empty-cell">+</div>
+                    }
+                  </div>
+                }
               </div>
-              <div class="empty-cell" *ngIf="!getShift(employee.id, day.dateStr)">+</div>
-            </div>
+            }
           </div>
         </div>
-      </div>
-
+      }
+    
       <mat-menu #shiftMenu="matMenu">
         <ng-template matMenuContent let-employee="employee" let-date="date">
-          <button mat-menu-item *ngFor="let shiftType of shiftTypes"
-                  (click)="assignShift(employee, date, shiftType)">
-            <div class="menu-shift-item">
-              <div class="menu-color-box" [style.background-color]="shiftType.color"></div>
-              <span>{{ shiftType.name }}</span>
-              <span class="menu-time">{{ shiftType.startTime }} - {{ shiftType.endTime }}</span>
-            </div>
-          </button>
-          <mat-divider *ngIf="getShift(employee.id, date)"></mat-divider>
-          <button mat-menu-item *ngIf="getShift(employee.id, date)"
-                  (click)="removeShift(employee.id, date)"
-                  class="remove-shift">
-            <mat-icon>delete</mat-icon>
-            <span>Remove Shift</span>
-          </button>
+          @for (shiftType of shiftTypes; track shiftType) {
+            <button mat-menu-item
+              (click)="assignShift(employee, date, shiftType)">
+              <div class="menu-shift-item">
+                <div class="menu-color-box" [style.background-color]="shiftType.color"></div>
+                <span>{{ shiftType.name }}</span>
+                <span class="menu-time">{{ shiftType.startTime }} - {{ shiftType.endTime }}</span>
+              </div>
+            </button>
+          }
+          @if (getShift(employee.id, date)) {
+            <mat-divider></mat-divider>
+          }
+          @if (getShift(employee.id, date)) {
+            <button mat-menu-item
+              (click)="removeShift(employee.id, date)"
+              class="remove-shift">
+              <mat-icon>delete</mat-icon>
+              <span>Remove Shift</span>
+            </button>
+          }
         </ng-template>
       </mat-menu>
     </div>
-  `,
+    `,
   styles: [`
     .roster-container { padding: 20px; height: calc(100vh - 40px); display: flex; flex-direction: column; }
     .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; flex-wrap: wrap; gap: 12px; }
@@ -206,6 +235,9 @@ interface DayColumn {
   `]
 })
 export class RosterComponent implements OnInit {
+  private dataService = inject(DataService);
+  private breakpointObserver = inject(BreakpointObserver);
+
   viewMode: 'week' | 'month' = 'week';
   currentDate = new Date();
   days: DayColumn[] = [];
@@ -214,10 +246,7 @@ export class RosterComponent implements OnInit {
   shiftAssignments: ShiftAssignment[] = [];
   isMobile = false;
 
-  constructor(
-    private dataService: DataService,
-    private breakpointObserver: BreakpointObserver
-  ) {
+  constructor() {
     this.breakpointObserver.observe([Breakpoints.Handset])
       .subscribe(result => {
         this.isMobile = result.matches;
@@ -306,7 +335,8 @@ export class RosterComponent implements OnInit {
     return null;
   }
 
-  selectCell(employee: Employee, date: string): void {}
+  // eslint-disable-next-line @typescript-eslint/no-empty-function
+  selectCell(_employee: Employee, _date: string): void {}
 
   assignShift(employee: Employee, date: string, shiftType: ShiftType): void {
     const existing = this.shiftAssignments.find(a =>
