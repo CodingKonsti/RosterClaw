@@ -77,8 +77,9 @@ app.UseAuthorization();
 app.UseDefaultFiles();
 app.UseStaticFiles();
 
-app.MapGroup("/api").MapIdentityApi<ApplicationUser>();
-app.MapControllers();
+var api = app.MapGroup("/api");
+api.MapIdentityApi<ApplicationUser>();
+api.MapControllers();
 
 // SPA fallback — must be last
 app.MapFallbackToFile("index.html");
