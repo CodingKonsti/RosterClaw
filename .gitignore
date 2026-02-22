@@ -1,15 +1,8 @@
 node_modules/
 
 # Backend
-roster-api/roster.db
-roster-api/roster.db-shm
-roster-api/roster.db-wal
-
-roster-api/bin/
-roster-api/obj/
-
-src/RosterClaw.Api/roster.db
-src/RosterClaw.Api/roster.db-shm
-src/RosterClaw.Api/roster.db-wal
-bin/
-obj/
+backend/src/RosterClaw.Api/roster.db
+backend/src/RosterClaw.Api/roster.db-shm
+backend/src/RosterClaw.Api/roster.db-wal
+backend/**/bin/
+backend/**/obj/
