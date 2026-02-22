@@ -4,3 +4,6 @@ node_modules/
 roster-api/roster.db
 roster-api/roster.db-shm
 roster-api/roster.db-wal
+
+roster-api/bin/
+roster-api/obj/
