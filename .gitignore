@@ -1,1 +1,12 @@
 node_modules/
+
+# .NET build artifacts
+[Bb]in/
+[Oo]bj/
+*.user
+*.suo
+
+# SQLite
+backend/src/RosterClaw.Api/roster.db
+backend/src/RosterClaw.Api/roster.db-shm
+backend/src/RosterClaw.Api/roster.db-wal

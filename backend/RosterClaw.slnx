@@ -1,0 +1,8 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/RosterClaw.Api/RosterClaw.Api.csproj" />
+    <Project Path="src/RosterClaw.Application/RosterClaw.Application.csproj" />
+    <Project Path="src/RosterClaw.Domain/RosterClaw.Domain.csproj" />
+    <Project Path="src/RosterClaw.Infrastructure/RosterClaw.Infrastructure.csproj" />
+  </Folder>
+</Solution>
