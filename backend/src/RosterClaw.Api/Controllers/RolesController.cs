@@ -6,7 +6,7 @@ using RosterClaw.Application.DTOs;
 namespace RosterClaw.Api.Controllers;
 
 [ApiController]
-[Route("api/[controller]")]
+[Route("[controller]")]
 [Authorize(Roles = "Admin")]
 public class RolesController : ControllerBase
 {

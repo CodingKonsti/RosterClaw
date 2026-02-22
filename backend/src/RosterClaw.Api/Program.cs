@@ -74,7 +74,14 @@ app.UseCors("Angular");
 app.UseAuthentication();
 app.UseAuthorization();
 
-app.MapIdentityApi<ApplicationUser>();
-app.MapControllers();
+app.UseDefaultFiles();
+app.UseStaticFiles();
+
+var api = app.MapGroup("/api");
+api.MapIdentityApi<ApplicationUser>();
+api.MapControllers();
+
+// SPA fallback — must be last
+app.MapFallbackToFile("index.html");
 
 app.Run();
