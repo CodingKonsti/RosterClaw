@@ -11,3 +11,5 @@ roster-api/obj/
 src/RosterClaw.Api/roster.db
 src/RosterClaw.Api/roster.db-shm
 src/RosterClaw.Api/roster.db-wal
+bin/
+obj/
