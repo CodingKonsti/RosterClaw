@@ -77,7 +77,7 @@ app.UseAuthorization();
 app.UseDefaultFiles();
 app.UseStaticFiles();
 
-app.MapIdentityApi<ApplicationUser>();
+app.MapGroup("/api").MapIdentityApi<ApplicationUser>();
 app.MapControllers();
 
 // SPA fallback — must be last
