@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.DependencyInjection;
+using RosterClaw.Domain.Entities;
 using RosterClaw.Infrastructure.Identity;
 
 namespace RosterClaw.Infrastructure.Data;
@@ -10,7 +11,9 @@ public static class DatabaseSeeder
     {
         var roleManager = services.GetRequiredService<RoleManager<IdentityRole>>();
         var userManager = services.GetRequiredService<UserManager<ApplicationUser>>();
+        var db = services.GetRequiredService<AppDbContext>();
 
+        // Roles
         string[] roles = ["Admin", "Manager", "Employee"];
         foreach (var role in roles)
         {
@@ -55,24 +58,25 @@ public static class DatabaseSeeder
             }
         }
 
-        // 50 Employees
-        var firstNames = new[] { "James", "Mary", "Robert", "Patricia", "John", "Jennifer", "David", "Linda", "William", "Elizabeth", "Richard", "Barbara", "Joseph", "Susan", "Thomas", "Jessica", "Christopher", "Sarah", "Charles", "Karen", "Daniel", "Lisa", "Matthew", "Nancy", "Anthony", "Betty", "Mark", "Margaret", "Donald", "Sandra", "Steven", "Ashley", "Paul", "Emily", "Andrew", "Donna", "Joshua", "Michelle", "Kenneth", "Dorothy", "Kevin", "Carol", "Brian", "Amanda", "George", "Melissa", "Timothy", "Deborah", "Ronald", "Stephanie" };
-        var lastNames = new[] { "Smith", "Johnson", "Williams", "Brown", "Jones", "Garcia", "Miller", "Davis", "Rodriguez", "Martinez", "Hernandez", "Lopez", "Gonzalez", "Wilson", "Anderson", "Thomas", "Taylor", "Moore", "Jackson", "Martin", "Lee", "Perez", "Thompson", "White", "Harris", "Sanchez", "Clark", "Ramirez", "Lewis", "Robinson", "Walker", "Young", "Allen", "King", "Wright", "Scott", "Torres", "Nguyen", "Hill", "Flores", "Green", "Adams", "Nelson", "Baker", "Hall", "Rivera", "Campbell", "Mitchell", "Carter", "Roberts" };
-
-        for (int i = 0; i < 50; i++)
+        // Employees — seed into the Employees table (not as identity users)
+        if (!db.Employees.Any())
         {
-            var email = $"{firstNames[i].ToLower()}.{lastNames[i].ToLower()}@rosterclaw.com";
-            if (await userManager.FindByEmailAsync(email) is null)
+            var firstNames = new[] { "James", "Mary", "Robert", "Patricia", "John", "Jennifer", "David", "Linda", "William", "Elizabeth", "Richard", "Barbara", "Joseph", "Susan", "Thomas", "Jessica", "Christopher", "Sarah", "Charles", "Karen", "Daniel", "Lisa", "Matthew", "Nancy", "Anthony", "Betty", "Mark", "Margaret", "Donald", "Sandra", "Steven", "Ashley", "Paul", "Emily", "Andrew", "Donna", "Joshua", "Michelle", "Kenneth", "Dorothy", "Kevin", "Carol", "Brian", "Amanda", "George", "Melissa", "Timothy", "Deborah", "Ronald", "Stephanie" };
+            var lastNames = new[] { "Smith", "Johnson", "Williams", "Brown", "Jones", "Garcia", "Miller", "Davis", "Rodriguez", "Martinez", "Hernandez", "Lopez", "Gonzalez", "Wilson", "Anderson", "Thomas", "Taylor", "Moore", "Jackson", "Martin", "Lee", "Perez", "Thompson", "White", "Harris", "Sanchez", "Clark", "Ramirez", "Lewis", "Robinson", "Walker", "Young", "Allen", "King", "Wright", "Scott", "Torres", "Nguyen", "Hill", "Flores", "Green", "Adams", "Nelson", "Baker", "Hall", "Rivera", "Campbell", "Mitchell", "Carter", "Roberts" };
+            var jobRoles = new[] { "Nurse", "Senior Nurse", "Doctor", "Surgeon", "Anesthesiologist", "Paramedic", "Receptionist", "Lab Technician", "Radiologist", "Pharmacist", "Physiotherapist", "Care Assistant", "Ward Manager", "Cleaner", "Security Officer" };
+            var phones = new[] { "+43 664 1234567", "+43 676 2345678", "+43 699 3456789", "+43 650 4567890", "+43 664 5678901" };
+
+            var employees = Enumerable.Range(0, 50).Select(i => new Employee
             {
-                var emp = new ApplicationUser
-                {
-                    UserName = email, Email = email,
-                    FirstName = firstNames[i], LastName = lastNames[i],
-                    Role = "Employee", EmailConfirmed = true
-                };
-                await userManager.CreateAsync(emp, "Employee123!");
-                await userManager.AddToRoleAsync(emp, "Employee");
-            }
+                FirstName = firstNames[i],
+                LastName = lastNames[i],
+                JobRole = jobRoles[i % jobRoles.Length],
+                Email = $"{firstNames[i].ToLower()}.{lastNames[i].ToLower()}@rosterclaw.com",
+                Phone = phones[i % phones.Length]
+            }).ToList();
+
+            db.Employees.AddRange(employees);
+            await db.SaveChangesAsync();
         }
     }
 }
