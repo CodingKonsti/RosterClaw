@@ -71,6 +71,12 @@
             },
             "development": {
               "buildTarget": "roster-app:build:development"
+            },
+            "https": {
+              "buildTarget": "roster-app:build:development",
+              "ssl": true,
+              "sslCert": "ssl/localhost.pem",
+              "sslKey": "ssl/localhost-key.pem"
             }
           },
           "defaultConfiguration": "development"
